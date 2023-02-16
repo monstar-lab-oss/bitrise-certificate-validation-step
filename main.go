@@ -25,8 +25,11 @@ func main() {
 		CertificateURLList:        `env:"certificate_url_list,required"`,
 		CertificatePassphraseList: `env:"passphrase_list"`,
 	}
+	fmt.Println("Codesign inputs:  %s.", codesignInputs)
+
 	cmdFactory := command.NewFactory(env.NewRepository())
 	codesignConfig, _ := codesign.ParseConfig(codesignInputs, cmdFactory)
+	fmt.Println("Codesign config:  %s.", codesignConfig)
 
 	certDownloader := certdownloader.NewDownloader(codesignConfig.CertificatesAndPassphrases, retry.NewHTTPClient().StandardClient())
 	certificates, err := certDownloader.GetCertificates()
