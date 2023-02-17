@@ -102,7 +102,20 @@ inputs:
         Certificates without a passphrase: for using a single certificate, leave this step input empty. For multiple certificates, use the separator as if there was a passphrase (examples: `pass|`, `|pass|`, `|`)
       is_required: false  # A single cert with an empty passphrase is allowed too
       is_sensitive: true
+  - keychain_path: $HOME/Library/Keychains/login.keychain
+    opts:
+      category: Build environment
+      title: Keychain path
+      summary: Path to the Keychain where the code signing certificates will be installed.
+      is_required: true
 
+  - keychain_password: $BITRISE_KEYCHAIN_PASSWORD
+    opts:
+      category: Build environment
+      title: Keychain password
+      summary: Password for the provided Keychain.
+      is_required: true
+      is_sensitive: true
 outputs:
   - EXAMPLE_STEP_OUTPUT:
     opts:

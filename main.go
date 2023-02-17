@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/bitrise-io/go-steputils/stepconf"
+	"github.com/bitrise-io/go-steputils/v2/stepconf"
 	v1log "github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/retry"
 	"github.com/bitrise-io/go-utils/v2/command"
@@ -17,8 +17,10 @@ import (
 
 // Config ...
 type Config struct {
-	CertificateURLList        string `env:"certificate_url_list,required"`
-	CertificatePassphraseList string `env:"passphrase_list"`
+	CertificateURLList        string          `env:"certificate_url_list,required"`
+	CertificatePassphraseList stepconf.Secret `env:"passphrase_list"`
+	KeychainPath              string          `env:"keychain_path"`
+	KeychainPassword          stepconf.Secret `env:"keychain_password"`
 }
 
 func failf(format string, args ...interface{}) {
@@ -29,14 +31,19 @@ func failf(format string, args ...interface{}) {
 func main() {
 	// Parse and validate inputs
 	var cfg Config
-	parser := stepconf.NewDefaultEnvParser()
+	parser := stepconf.NewInputParser(env.NewRepository())
 	if err := parser.Parse(&cfg); err != nil {
 		failf("Config: %s", err)
 	}
 	stepconf.Print(cfg)
 
 	fmt.Println("Starting to check the expiration of certificates uploaded to Bitrise.")
-	codesignInputs := codesign.Input{CertificateURLList: cfg.CertificateURLList}
+	codesignInputs := codesign.Input{
+		CertificateURLList:        cfg.CertificateURLList,
+		CertificatePassphraseList: cfg.CertificatePassphraseList,
+		KeychainPath:              cfg.KeychainPath,
+		KeychainPassword:          cfg.KeychainPassword,
+	}
 
 	fmt.Println("Codesign inputs: ", codesignInputs)
 
