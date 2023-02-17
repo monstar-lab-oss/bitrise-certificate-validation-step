@@ -1,18 +1,10 @@
-#
-# A couple of useful guides & docs:
-#
-# - Main Bitrise CLI docs: https://github.com/bitrise-io/bitrise/tree/master/_docs
-# - Step Development Guideline: https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
-# - Bitrise.yml format spec: https://github.com/bitrise-io/bitrise/blob/master/_docs/bitrise-yml-format-spec.md
-# - Bitrise docs: http://devcenter.bitrise.io/
-# - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
-
 title: |-
-  Code signing certificate - validity check
+  Bitrise uploaded code signing certificate - expiration check
 summary: |
   Checks the validaty dates of the code signing certificates uploaded to Bitrise
 description: |
   Fails if any of the certificates uploaded in the Code Signing tab is not valid = is expired or not yet valid.
+  Also fails if there are no certificates uploaded.
 website: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
 source_code_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
 support_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker/issues
@@ -29,7 +21,6 @@ type_tags:
 toolkit:
   go:
     package_name: github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
-
 
 inputs:
   - certificate_url_list: $BITRISE_CERTIFICATE_URL
