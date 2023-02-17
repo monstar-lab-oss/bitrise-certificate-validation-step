@@ -32,17 +32,6 @@ toolkit:
 
 
 inputs:
-  - fail_on_zero_certificates: true
-    opts:
-      category: Configuration
-      title: Fail when no certificate is uploaded
-      summary: Fail the step if no certificates are uploaded to Bitrise
-      description: |-
-        This step is used in conjuction with cloud signing which requires
-        a development certificate to be uploaded. Therefore it fails when no
-        certificate is uploaded by default. 
-      is_required: true
-
   - certificate_url_list: $BITRISE_CERTIFICATE_URL
     opts:
       category: Build environment
