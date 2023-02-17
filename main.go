@@ -68,7 +68,7 @@ func main() {
 	}
 
 	certCount := strconv.Itoa(len(certificates))
-	fmt.Println("Found  %+v certificates.", certCount)
+	fmt.Println("Found" + certCount + "uploaded certificates \n")
 
 	// Validate the expiration of the certificates
 	if certificatesValid(certificates) {
