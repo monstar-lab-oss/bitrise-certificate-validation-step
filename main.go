@@ -17,8 +17,8 @@ import (
 
 // Config ...
 type Config struct {
-	CertificateURLList        string          `env:"certificate_url_list,required"`
-	CertificatePassphraseList stepconf.Secret `env:"passphrase_list"`
+	CertificateURLList        string `env:"certificate_url_list,required"`
+	CertificatePassphraseList string `env:"passphrase_list"`
 }
 
 func failf(format string, args ...interface{}) {
@@ -38,11 +38,11 @@ func main() {
 	fmt.Println("Starting to check the expiration of certificates uploaded to Bitrise.")
 	codesignInputs := codesign.Input{CertificateURLList: cfg.CertificateURLList}
 
-	fmt.Println("Codesign inputs:  %s.", codesignInputs)
+	fmt.Println("Codesign inputs: ", codesignInputs)
 
 	cmdFactory := command.NewFactory(env.NewRepository())
 	codesignConfig, _ := codesign.ParseConfig(codesignInputs, cmdFactory)
-	fmt.Println("Codesign config:  %s.", codesignConfig)
+	fmt.Println("Codesign config: ", codesignConfig)
 
 	certDownloader := certdownloader.NewDownloader(codesignConfig.CertificatesAndPassphrases, retry.NewHTTPClient().StandardClient())
 	certificates, err := certDownloader.GetCertificates()
