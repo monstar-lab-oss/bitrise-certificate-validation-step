@@ -41,7 +41,12 @@ func main() {
 	fmt.Println("Codesign inputs: ", codesignInputs)
 
 	cmdFactory := command.NewFactory(env.NewRepository())
-	codesignConfig, _ := codesign.ParseConfig(codesignInputs, cmdFactory)
+	codesignConfig, err := codesign.ParseConfig(codesignInputs, cmdFactory)
+
+	if err != nil {
+		failf(err.Error())
+	}
+
 	fmt.Println("Codesign config: ", codesignConfig)
 
 	certDownloader := certdownloader.NewDownloader(codesignConfig.CertificatesAndPassphrases, retry.NewHTTPClient().StandardClient())
