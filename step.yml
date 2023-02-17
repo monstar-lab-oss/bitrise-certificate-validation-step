@@ -16,7 +16,7 @@ description: |
 website: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
 source_code_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
 support_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker/issues
- project_type_tags:
+project_type_tags:
    - ios
    - macos
    - xamarin
