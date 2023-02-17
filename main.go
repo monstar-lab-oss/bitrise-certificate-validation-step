@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
+	"strconv"
 
 	"github.com/bitrise-io/go-steputils/v2/stepconf"
 	v1log "github.com/bitrise-io/go-utils/log"
@@ -15,14 +15,16 @@ import (
 	"github.com/bitrise-io/go-xcode/v2/codesign"
 )
 
-// Config ...
+// Config to parse the env vars
 type Config struct {
 	CertificateURLList        string          `env:"certificate_url_list,required"`
 	CertificatePassphraseList stepconf.Secret `env:"passphrase_list"`
-	KeychainPath              string          `env:"keychain_path"`
+	KeychainPath              string          `env:"keychain_path,required"`
 	KeychainPassword          stepconf.Secret `env:"keychain_password"`
+	FailOnZeroCertificates    bool            `env:"fail_on_zero_certificates"`
 }
 
+// Fails the step
 func failf(format string, args ...interface{}) {
 	v1log.Errorf(format, args...)
 	os.Exit(1)
@@ -45,7 +47,7 @@ func main() {
 		KeychainPassword:          cfg.KeychainPassword,
 	}
 
-	fmt.Println("Codesign inputs: ", codesignInputs)
+	fmt.Print(codesignInputs)
 
 	cmdFactory := command.NewFactory(env.NewRepository())
 	codesignConfig, err := codesign.ParseConfig(codesignInputs, cmdFactory)
@@ -54,8 +56,9 @@ func main() {
 		failf(err.Error())
 	}
 
-	fmt.Println("Codesign config: ", codesignConfig)
+	fmt.Print(codesignConfig)
 
+	fmt.Println("Downloading certificates from Bitrise. ")
 	certDownloader := certdownloader.NewDownloader(codesignConfig.CertificatesAndPassphrases, retry.NewHTTPClient().StandardClient())
 	certificates, err := certDownloader.GetCertificates()
 
@@ -63,17 +66,20 @@ func main() {
 		failf(err.Error())
 	}
 
-	if len(certificates) == 0 {
+	// Fail if no certificates are uploaded
+	if len(certificates) == 0 && cfg.FailOnZeroCertificates {
 		failf("Found 0 uploaded certificates. Upload a code signing certificate in the App's code signing tab.")
 	}
 
-	fmt.Println("Found  %s certificates.", len(certificates))
+	certCount := strconv.Itoa(len(certificates))
+	fmt.Println("Found  %w certificates.", certCount)
 
+	// Validate the expiration of the certificates
 	if certificatesValid(certificates) {
-		fmt.Println("All certificates have valid expirations. ")
+		fmt.Println("✅ All certificates have valid expirations")
 		os.Exit(0)
 	} else {
-		failf("Certificate expired here")
+		failf("❗️ One or more of the certificates uploaded to Bitrise are expired. Upload a valid certificate.")
 	}
 }
 
@@ -85,20 +91,4 @@ func certificatesValid(certificateInfos []certificateutil.CertificateInfoModel) 
 	} else {
 		return true
 	}
-}
-
-func createTestCert(validDays int) certificateutil.CertificateInfoModel {
-	const (
-		teamID     = "TESTING TEAM ID"
-		commonName = "Apple Developer: TEST"
-		teamName   = "TESTING TEAM NAME"
-	)
-	expiry := time.Now().AddDate(0, 0, validDays)
-	serial := int64(1234)
-
-	cert, privateKey, _ := certificateutil.GenerateTestCertificate(serial, teamID, teamName, commonName, expiry)
-
-	certInfo := certificateutil.NewCertificateInfo(*cert, privateKey)
-
-	return certInfo
 }
