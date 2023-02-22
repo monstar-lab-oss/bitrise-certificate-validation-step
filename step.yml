@@ -5,9 +5,9 @@ summary: |
 description: |
   Fails if any of the certificates uploaded in the Code Signing tab is not valid = is expired or not yet valid.
   Also fails if there are no certificates uploaded.
-website: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
-source_code_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
-support_url: https://github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker/issues
+website: https://github.com/monstar-lab-oss/bitrise-certificate-validation-step/
+source_code_url: https://github.com/monstar-lab-oss/bitrise-certificate-validation-step/
+support_url: https://github.com/monstar-lab-oss/bitrise-certificate-validation-step/issues
 project_type_tags:
    - ios
    - macos
@@ -20,7 +20,7 @@ type_tags:
 
 toolkit:
   go:
-    package_name: github.com/BucekJiri/monstarlab-ios/bitrise-step-certificatechecker
+    package_name: github.com/monstar-lab-oss/bitrise-certificate-validation-step/
 
 inputs:
   - certificate_url_list: $BITRISE_CERTIFICATE_URL
